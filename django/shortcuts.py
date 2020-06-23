@@ -4,19 +4,30 @@ of MVC. In other words, these functions/classes introduce controlled coupling
 for convenience's sake.
 """
 from django.http import (
-    Http404, HttpResponse, HttpResponsePermanentRedirect, HttpResponseRedirect,
+    Http404,
+    HttpResponse,
+    HttpResponsePermanentRedirect,
+    HttpResponseRedirect,
 )
 from django.template import loader
 from django.urls import NoReverseMatch, reverse
 from django.utils.functional import Promise
 
 
-def render(request, template_name, context=None, content_type=None, status=None, using=None):
+def render(request,
+           template_name,
+           context=None,
+           content_type=None,
+           status=None,
+           using=None):
     """
     Return a HttpResponse whose content is filled with the result of calling
     django.template.loader.render_to_string() with the passed arguments.
     """
-    content = loader.render_to_string(template_name, context, request, using=using)
+    content = loader.render_to_string(template_name,
+                                      context,
+                                      request,
+                                      using=using)
     return HttpResponse(content, content_type, status)
 
 
@@ -67,15 +78,16 @@ def get_object_or_404(klass, *args, **kwargs):
     """
     queryset = _get_queryset(klass)
     if not hasattr(queryset, 'get'):
-        klass__name = klass.__name__ if isinstance(klass, type) else klass.__class__.__name__
+        klass__name = klass.__name__ if isinstance(
+            klass, type) else klass.__class__.__name__
         raise ValueError(
             "First argument to get_object_or_404() must be a Model, Manager, "
-            "or QuerySet, not '%s'." % klass__name
-        )
+            "or QuerySet, not '%s'." % klass__name)
     try:
         return queryset.get(*args, **kwargs)
     except queryset.model.DoesNotExist:
-        raise Http404('No %s matches the given query.' % queryset.model._meta.object_name)
+        raise Http404('No %s matches the given query.' %
+                      queryset.model._meta.object_name)
 
 
 def get_list_or_404(klass, *args, **kwargs):
@@ -88,14 +100,15 @@ def get_list_or_404(klass, *args, **kwargs):
     """
     queryset = _get_queryset(klass)
     if not hasattr(queryset, 'filter'):
-        klass__name = klass.__name__ if isinstance(klass, type) else klass.__class__.__name__
+        klass__name = klass.__name__ if isinstance(
+            klass, type) else klass.__class__.__name__
         raise ValueError(
             "First argument to get_list_or_404() must be a Model, Manager, or "
-            "QuerySet, not '%s'." % klass__name
-        )
+            "QuerySet, not '%s'." % klass__name)
     obj_list = list(queryset.filter(*args, **kwargs))
     if not obj_list:
-        raise Http404('No %s matches the given query.' % queryset.model._meta.object_name)
+        raise Http404('No %s matches the given query.' %
+                      queryset.model._meta.object_name)
     return obj_list
 
 
@@ -139,3 +152,7 @@ def resolve_url(to, *args, **kwargs):
 
     # Finally, fall back and assume it's a URL
     return to
+
+
+def make_toast():
+    return 'toast'
